@@ -64,7 +64,7 @@ public class HuffProcessor {
 		String code;
 		int val = in.readBits(BITS_PER_WORD);
 		while (val != -1) {
-			code = codings [val];
+			code = codings[val];
 			out.writeBits(code.length(), Integer.parseInt(code, 2));
 			val = in.readBits(BITS_PER_WORD);
 		}
@@ -101,7 +101,7 @@ public class HuffProcessor {
 	private String[] makeCodingFromTree(HuffNode root) {
 		String[] encodings = new String[ALPH_SIZE + 1];
 		codingHelper(root, "", encodings);
-		return null;
+		return encodings;
 	}
 
 	private void codingHelper(HuffNode root, String string, String[] encodings) {
