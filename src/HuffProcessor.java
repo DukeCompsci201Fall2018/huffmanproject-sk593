@@ -61,7 +61,7 @@ public class HuffProcessor {
 		
 	}
 	private void writeCompressedBits(String[] codings, BitInputStream in, BitOutputStream out) {
-		String code;
+		/*String code;
 		int val = in.readBits(BITS_PER_WORD);
 		while (val != -1) {
 			code = codings[val];
@@ -70,6 +70,17 @@ public class HuffProcessor {
 		}
 		
 		code = codings[PSEUDO_EOF];
+		out.writeBits(code.length(), Integer.parseInt(code, 2));
+	}*/
+		while (true) {
+			int val = in.readBits(BITS_PER_WORD);
+			if (val == -1) {
+				break;
+			}
+			String code = codings [val];
+			out.writeBits(code.length(), Integer.parseInt(code, 2));
+		}
+		String code = codings [PSEUDO_EOF];
 		out.writeBits(code.length(), Integer.parseInt(code, 2));
 	}
 
@@ -109,11 +120,11 @@ public class HuffProcessor {
 			return;
 		}
 		if (root.myLeft == null && root.myRight == null) {
-			encodings[root.myValue] = encodings[root.myValue] + "1";
+			encodings[root.myValue] = string;
 			return;
 		}
-		codingHelper(root.myLeft,encodings[root.myValue] + "0", encodings);
-		codingHelper(root.myRight,encodings[root.myValue] + "0", encodings);
+		codingHelper(root.myLeft,string + "0", encodings);
+		codingHelper(root.myRight,string + "1", encodings);
 		
 	}
 
@@ -129,7 +140,7 @@ public class HuffProcessor {
 		while(pq.size() > 1) {
 			HuffNode left = pq.remove();
 			HuffNode right = pq.remove();
-			HuffNode t = new HuffNode(0, left.myWeight + right.myWeight, left, right);
+			HuffNode t = new HuffNode(left.myValue + right.myValue, left.myWeight + right.myWeight, left, right);
 			pq.add(t);
 			
 		}
@@ -144,7 +155,7 @@ public class HuffProcessor {
 		
 		while (true) {
 			int val = in.readBits(BITS_PER_WORD);
-			if (val == -1) {
+			if (val == -1 || val == PSEUDO_EOF) {
 				break;
 			}
 			freq[val] = freq[val] + 1;
